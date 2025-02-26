@@ -9,10 +9,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WindowType;
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +29,8 @@ public class OpenLinks4 {
     private static final int numberOfUsers = 3;  // Adjust number of users
     private static final int iterationsPerUser = 2; // Adjust iterations per user
     private static final int tabsPerIteration = 10;  // Number of tabs per iteration
+
+    private static final String SELENIUM_GRID_URL = "http://192.168.1.70///:4444/wd/hub";  // Replace with your actual IP
 
     @Test
     public void loadTest() throws InterruptedException {
@@ -50,8 +55,7 @@ public class OpenLinks4 {
     private void runIteration(int iteration) throws InterruptedException, IOException {
         System.out.println("Starting Iteration: " + iteration);
 
-        WebDriverManager.chromedriver().setup();
-        WebDriver driver = new ChromeDriver();
+        WebDriver driver = createRemoteWebDriver();  // Use Selenium Grid WebDriver
         driver.manage().window().maximize();
 
         try {
@@ -61,6 +65,12 @@ public class OpenLinks4 {
             driver.quit();  // Ensure browser closes before next iteration
             System.out.println("Iteration " + iteration + " Completed.\n");
         }
+    }
+
+    private WebDriver createRemoteWebDriver() throws MalformedURLException {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setBrowserName("chrome");
+        return new RemoteWebDriver(new URL(SELENIUM_GRID_URL), capabilities);
     }
 
     private List<String> fetchDocumentUrls(int limit) throws IOException {
