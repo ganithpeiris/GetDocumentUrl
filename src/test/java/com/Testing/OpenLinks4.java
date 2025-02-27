@@ -7,13 +7,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WindowType;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -22,11 +18,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import java.net.URL;
-
-import static org.openqa.selenium.remote.DesiredCapabilities.*;
 
 public class OpenLinks4 {
     private static final String BASE_URL = "https://hnbf.enadocapp.com/enadocHnbmigration/api/v3/documents/";
@@ -58,20 +49,14 @@ public class OpenLinks4 {
 
     private void runIteration(int iteration) throws InterruptedException, IOException {
         System.out.println("Starting Iteration: " + iteration);
-//============run on this macchine
-      //  WebDriverManager.chromedriver().setup();
-       // WebDriver driver = new ChromeDriver();
 
-        //========================to run on grid
-        ChromeOptions options = new ChromeOptions();
-       // options.addArguments("--start-minimized");  // Start Chrome in minimized state
-        WebDriver driver = new RemoteWebDriver(new URL("http://192.168.1.70:4444/wd/hub"), options);
-       //driver.manage().window().maximize();
+        WebDriverManager.chromedriver().setup();
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
 
         try {
             List<String> documentUrls = fetchDocumentUrls(tabsPerIteration);
             openTabs(driver, documentUrls);
-
         } finally {
             driver.quit();  // Ensure browser closes before next iteration
             System.out.println("Iteration " + iteration + " Completed.\n");
@@ -115,39 +100,11 @@ public class OpenLinks4 {
     }
 
     private void openTabs(WebDriver driver, List<String> urls) throws InterruptedException {
-               // Use Java to open all document URLs in new tabs=====
         for (String url : urls) {
             driver.switchTo().newWindow(WindowType.TAB);
             driver.get(url);
-            //Thread.sleep(1000);  // Small delay to simulate real-world behavior
+            Thread.sleep(1000);  // Small delay to simulate real-world behavior
         }
-        Thread.sleep(15000);  // Keep tabs open for a few seconds before closing
-
-        // Use JavaScript to open all document URLs in new tabs=====
-       /* JavascriptExecutor js = (JavascriptExecutor) driver;
-        for (String url : urls) {
-            js.executeScript("window.open(arguments[0]);", url);
-            Thread.sleep(7000); // Small delay to simulate real-world behavior
-        }
-        Thread.sleep(50000); // Keep tabs open for a few seconds before closing*/
-
+        Thread.sleep(5000);  // Keep tabs open for a few seconds before closing
     }
-/*
-   private void openTabs(WebDriver driver, List<String> urls) throws InterruptedException {
-       JavascriptExecutor js = (JavascriptExecutor) driver;
-
-       int batchSize = 5; // Open 5 tabs at a time to avoid crashes
-       for (int i = 0; i < urls.size(); i++) {
-           js.executeScript("window.open(arguments[0]);", urls.get(i));
-           Thread.sleep(2000); // Small delay to prevent browser overload
-
-           if ((i + 1) % batchSize == 0) {
-               Thread.sleep(5000); // Wait 5 seconds after every 5 tabs
-           }
-       }
-
-       Thread.sleep(5000); // Final wait before closing
-   }
-*/
-
 }
