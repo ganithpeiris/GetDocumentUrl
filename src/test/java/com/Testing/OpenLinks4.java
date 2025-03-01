@@ -32,9 +32,9 @@ public class OpenLinks4 {
     private static final String BASE_URL = "https://hnbf.enadocapp.com/enadocHnbmigration/api/v3/documents/";
     private static final String AUTH_TOKEN = "Bearer CDEF57F19C6A446C851BEF320507DCFC7759C78A2AA448A09CB02E2DDDBD4C8695A6EFFA928C4C7BAB8333528D89887E1FA0531BE7AE46B294863E64492DA7CB";
 
-    private static final int numberOfUsers = 3;  // Adjust number of users
-    private static final int iterationsPerUser = 2; // Adjust iterations per user
-    private static final int tabsPerIteration = 10;  // Number of tabs per iteration
+    private static final int numberOfUsers = 1;  // Adjust number of users
+    private static final int iterationsPerUser = 1; // Adjust iterations per user
+    private static final int tabsPerIteration = 1;  // Number of tabs per iteration
 
     @Test
     public void loadTest() throws InterruptedException {
@@ -58,14 +58,19 @@ public class OpenLinks4 {
 
     private void runIteration(int iteration) throws InterruptedException, IOException {
         System.out.println("Starting Iteration: " + iteration);
-//============run on this macchine
-      //  WebDriverManager.chromedriver().setup();
-       // WebDriver driver = new ChromeDriver();
-
-        //========================to run on grid
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless=new");  // Headless mode
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+//============run on this macchine
+        WebDriverManager.chromedriver().setup();
+        WebDriver driver = new ChromeDriver(options);
+
+        //========================to run on grid-------------------------------
+      //  ChromeOptions options = new ChromeOptions();
+
        // options.addArguments("--start-minimized");  // Start Chrome in minimized state
-        WebDriver driver = new RemoteWebDriver(new URL("http://192.168.1.70:4444/wd/hub"), options);
+        //WebDriver driver = new RemoteWebDriver(new URL("http://192.168.1.70:4444/wd/hub"), options);
        //driver.manage().window().maximize();
 
         try {
